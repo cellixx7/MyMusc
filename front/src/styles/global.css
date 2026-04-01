@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   margin: 0;
   padding: 0;
@@ -28,3 +32,4 @@ h1 {
 p {
   color: #b7c0cc;
 }
+

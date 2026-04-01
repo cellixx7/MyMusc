@@ -1,32 +1,99 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import "./Navbar.css";
 
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [openNav, setOpenNav] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 960) setOpenNav(false);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const navItems = [
+    { label: "Início", path: "/" },
+    { label: "Explorar", path: "/explorar" },
+    { label: "Ferramentas", path: "/ferramentas" },
+    { label: "Dashboard", path: "/dashboard" },
+  ];
+
+  const navList = (
+    <ul className="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-6">
+      {navItems.map((item) => (
+        <li key={item.path} className="font-medium">
+          <Link
+            to={item.path}
+            className="flex items-center p-1 text-gray-800 hover:text-blue-500 transition"
+          >
+            {item.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
-    <nav className="navbar">
-      <div className="navbar-logo">
-        <Link to="/">MyMusc</Link>
-      </div>
-      <ul className="navbar-links">
-        <li><Link to="/">Início</Link></li>
-        <li><Link to="/explorar">Explorar</Link></li>
-        <li><Link to="/ferramentas">Ferramentas</Link></li>
-        {/* Links de conta à direita ou separados se preferir */}
-        <li><Link to="/dashboard">Dashboard</Link></li>
-        <div className="user" onClick={() => setMenuOpen(!menuOpen)}>
-            {/* @ts-ignore */}
-            <ion-icon name="person-circle"></ion-icon>
-          {menuOpen && (
-            <ul className="dropdown">
-              <li><Link to="/login">Login</Link></li>
-              <li><Link to="/cadastro">Cadastro</Link></li>
-            </ul>
-          )}
+    <nav className="w-full border-b bg-white">
+      <div className="mx-auto max-w-screen-xl px-4 py-3 flex items-center justify-between">
+        
+        {/* LOGO */}
+        <Link
+          to="/"
+          className="font-bold text-xl text-gray-900"
+        >
+          MyMusc
+        </Link>
+
+        {/* NAV DESKTOP */}
+        <div className="hidden lg:block">{navList}</div>
+
+        {/* BOTÕES DESKTOP */}
+        <div className="hidden lg:flex items-center gap-2">
+          <Link to="/login">
+            <button className="px-4 py-1 text-sm text-gray-700 hover:text-blue-500">
+              Entrar
+            </button>
+          </Link>
+
+          <Link to="/cadastro">
+            <button className="px-4 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+              Cadastrar
+            </button>
+          </Link>
         </div>
-      </ul>
+
+        {/* MENU MOBILE */}
+        <button
+          onClick={() => setOpenNav(!openNav)}
+          className="lg:hidden text-xl"
+        >
+          {openNav ? "✕" : "☰"}
+        </button>
+      </div>
+
+      {/* NAV MOBILE */}
+      {openNav && (
+        <div className="lg:hidden px-4 pb-4">
+          {navList}
+
+          <div className="flex flex-col gap-2 mt-4">
+            <Link to="/login">
+              <button className="w-full py-2 text-gray-700 border rounded">
+                Entrar
+              </button>
+            </Link>
+
+            <Link to="/cadastro">
+              <button className="w-full py-2 bg-blue-500 text-white rounded">
+                Cadastrar
+              </button>
+            </Link>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
